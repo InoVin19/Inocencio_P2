@@ -8,9 +8,8 @@ namespace Inocencio_P2
     {
         static void Main(string[] args)
         {
-
             try
-            {
+            { 
                 Console.WriteLine("Enter input values separated by space in the following order:");
                 Console.WriteLine("n t h d t1 t2");
 
@@ -29,6 +28,19 @@ namespace Inocencio_P2
                 int numDPS = int.Parse(tokens[3]);
                 int minTime = int.Parse(tokens[4]);
                 int maxTime = int.Parse(tokens[5]);
+
+                if (maxInstances <= 0 || numTanks <= 0 || numHealers <= 0 || numDPS <= 0 || minTime <= 0 || maxTime <= 0)
+                {
+                    Console.WriteLine("All input values must be greater than zero.");
+                    return;
+                }
+
+                // Validate that t2 is not less than t1.
+                if (maxTime < minTime)
+                {
+                    Console.WriteLine("The maximum clear time (t2) cannot be less than the minimum clear time (t1).");
+                    return;
+                }
 
                 int totalParties = Math.Min(numTanks, Math.Min(numHealers, numDPS / 3));
                 Console.WriteLine($"Total parties that can be formed: {totalParties}");

@@ -68,7 +68,7 @@ namespace Inocencio_P2
 
             while (formedParties < numParties)
             {
-                Party party = TryFormParty();
+                Party party = FormParty();
                 if (party != null)
                 {
                     formedParties++;
@@ -78,23 +78,19 @@ namespace Inocencio_P2
                 }
                 else
                 {
-                    // Pause briefly before checking the queues again.
                     Thread.Sleep(100);
                 }
             }
-            // Wait for all parties to finish processing.
             Task.WaitAll(tasks.ToArray());
 
-            // Optionally signal that processing is complete.
             Console.WriteLine(" ");
             Console.WriteLine("All parties have been served.");
         }
 
-        private Party TryFormParty()
+        private Party FormParty()
         {
             lock (queueLock)
             {
-                // Check if there is at least 1 Tank, 1 Healer, and 3 DPS.
                 if (tankQueue.Count > 0 && healerQueue.Count > 0 && dpsQueue.Count >= 3)
                 {
                     Player tank = tankQueue.Dequeue();
@@ -115,21 +111,17 @@ namespace Inocencio_P2
 
         private void ProcessParty(Party party, int currentPartyNumber)
         {
-            // Wait for an available dungeon instance.
             s.Wait();
             try
             {
-                // Get an available dungeon instance.
                 Dungeon instance = GetAvailableDungeonInstance();
                 if (instance != null)
                 {
-                    // Run the dungeon simulation for the party.
                     instance.RunInstance(party, currentPartyNumber, minTime, maxTime);
                 }
             }
             finally
             {
-                // Release the semaphore to indicate the instance is available.
                 s.Release();
             }
         }
@@ -139,18 +131,17 @@ namespace Inocencio_P2
             lock (dungeonInstances)
             {
                 int instanceCount = dungeonInstances.Count;
-                // Loop through all instances starting from lastUsedInstanceIndex + 1
                 for (int i = 0; i < instanceCount; i++)
                 {
                     int index = (lastUsedInstanceIndex + i + 1) % instanceCount;
                     if (!dungeonInstances[index].IsActive)
                     {
-                        lastUsedInstanceIndex = index; // Update last used index.
+                        lastUsedInstanceIndex = index;
                         return dungeonInstances[index];
                     }
                 }
             }
-            return null; // Should not occur due to semaphore control.
+            return null;
         }
 
         private void PrintStatuses()
@@ -174,17 +165,15 @@ namespace Inocencio_P2
                 while (!token.IsCancellationRequested)
                 {
                     PrintStatuses();
-                    // Wait for 5 seconds before printing again.
                     await Task.Delay(5000, token);
                 }
             }
             catch (TaskCanceledException)
             {
-                // Task was cancelled—do nothing.
+                
             }
             finally
             {
-                // Print final statuses once more after cancellation.
                 PrintStatuses();
             }
         }

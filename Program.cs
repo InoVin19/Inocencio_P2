@@ -35,7 +35,6 @@ namespace Inocencio_P2
                     return;
                 }
 
-                // Validate that t2 is not less than t1.
                 if (maxTime < minTime)
                 {
                     Console.WriteLine("The maximum clear time (t2) cannot be less than the minimum clear time (t1).");
@@ -47,8 +46,7 @@ namespace Inocencio_P2
 
                 DungeonQueue dungeonQueue = new DungeonQueue(maxInstances, minTime, maxTime);
 
-                // Enqueue players for each role.
-                int playerId = 1;  // Unique identifier counter.
+                int playerId = 1;
                 for (int i = 0; i < numTanks; i++)
                 {
                     dungeonQueue.EnqueuePlayer(new Player(Role.Tank, playerId++));
